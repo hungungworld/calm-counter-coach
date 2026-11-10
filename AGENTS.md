@@ -28,3 +28,10 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+
+- The whole app is one route (`/`) that switches screens (start → select → chat → feedback) in React state; nothing is persisted, because the user asked that conversations never be saved.
+- Practice rules (turn limits, timer, scenarios) live in `src/lib/roleplay-rules.ts` and are covered by `src/test/roleplay-rules.test.ts`; the UI and server both read them from there so limits stay in one place.
+- AI calls go through `src/lib/roleplay.functions.ts` (server functions) → `roleplay.server.ts` using `@lovable.dev/ai-gateway` with strict JSON-schema output; server functions return `{ ok, error }` with friendly Korean messages instead of throwing.
+- Chat UI is composed from AI Elements in `src/components/ai-elements/`; restyle them via classes, don't replace them.

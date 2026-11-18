@@ -18,6 +18,8 @@
  */
 
 @theme inline {
+  /* Spacing sits on a 4px grid, independent of the enlarged root font size. */
+  --spacing: 4px;
   --font-serif: "Nanum Myeongjo", "Noto Serif KR", serif;
   --font-sans: "Noto Sans KR", "Apple SD Gothic Neo", system-ui, sans-serif;
 
@@ -53,6 +55,8 @@
   --color-mood-angry: var(--mood-angry);
   --color-mood-softening: var(--mood-softening);
   --color-mood-calm: var(--mood-calm);
+  --color-stage: var(--stage);
+  --color-stage-foreground: var(--stage-foreground);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -98,7 +102,11 @@
   --mood-angry: oklch(0.52 0.15 28);
   --mood-softening: oklch(0.66 0.11 75);
   --mood-calm: oklch(0.5 0.09 160);
-  --shadow-soft-value: 0 1px 2px oklch(0.24 0.03 160 / 0.04), 0 6px 18px -10px oklch(0.24 0.03 160 / 0.14);
+  /* the 3D counter and anything laid over it */
+  --stage: oklch(0.22 0.035 162);
+  --stage-foreground: oklch(0.96 0.014 88);
+  --shadow-soft-value:
+    0 1px 2px oklch(0.24 0.03 160 / 0.04), 0 6px 18px -10px oklch(0.24 0.03 160 / 0.14);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -139,6 +147,8 @@
   --mood-angry: oklch(0.68 0.15 28);
   --mood-softening: oklch(0.78 0.11 80);
   --mood-calm: oklch(0.72 0.1 160);
+  --stage: oklch(0.17 0.03 162);
+  --stage-foreground: oklch(0.96 0.014 88);
 }
 
 @layer base {
@@ -171,13 +181,7 @@
 @utility gold-rule {
   position: relative;
   height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--gold) 20%,
-    var(--gold) 80%,
-    transparent
-  );
+  background: linear-gradient(90deg, transparent, var(--gold) 20%, var(--gold) 80%, transparent);
   &::after {
     content: "";
     position: absolute;
@@ -230,4 +234,106 @@
 
 @utility animate-rise {
   animation: rise-in 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Mouth flap for the illustrated customer while a line is being spoken */
+@keyframes talk {
+  0%,
+  100% {
+    transform: scaleY(0.3);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@utility animate-talk {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: talk 0.26s ease-in-out infinite;
+}
+
+/* Pop for a CALM step the moment it is covered */
+@keyframes step-pop {
+  0% {
+    transform: scale(0.86);
+    opacity: 0.4;
+  }
+  60% {
+    transform: scale(1.06);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@utility animate-step-pop {
+  animation: step-pop 0.42s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+/* Listening ring around the microphone */
+@keyframes mic-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  100% {
+    transform: scale(1.7);
+    opacity: 0;
+  }
+}
+
+@utility animate-mic-ring {
+  animation: mic-ring 1.5s cubic-bezier(0.2, 0.7, 0.2, 1) infinite;
+}
+
+/* Countdown bar before a spoken answer is sent on its own */
+@keyframes auto-send {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* Slow camera drift over a still customer image */
+@keyframes stage-drift {
+  0% {
+    transform: scale(1.03) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.075) translate3d(0, -0.6%, 0);
+  }
+}
+
+@utility animate-stage-drift {
+  animation: stage-drift 11s ease-in-out infinite alternate;
+}
+
+/* Text laid over the 3D stage needs its own scrim to stay readable */
+@utility stage-scrim {
+  background: linear-gradient(
+    180deg,
+    oklch(0.17 0.03 162 / 0.78) 0%,
+    oklch(0.17 0.03 162 / 0) 100%
+  );
+}
+
+@utility stage-scrim-bottom {
+  background: linear-gradient(0deg, oklch(0.17 0.03 162 / 0.86) 0%, oklch(0.17 0.03 162 / 0) 100%);
+}
+
+/* Motion is decoration here: anyone who asks for less gets stillness. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

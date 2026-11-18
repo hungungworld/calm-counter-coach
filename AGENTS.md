@@ -31,7 +31,9 @@ use the editor.
 
 ## Project rules
 
-- The whole app is one route (`/`) that switches screens (start → select → chat → feedback) in React state; nothing is persisted, because the user asked that conversations never be saved.
-- Practice rules (turn limits, timer, scenarios) live in `src/lib/roleplay-rules.ts` and are covered by `src/test/roleplay-rules.test.ts`; the UI and server both read them from there so limits stay in one place.
-- AI calls go through `src/lib/roleplay.functions.ts` (server functions) → `roleplay.server.ts` using `@lovable.dev/ai-gateway` with strict JSON-schema output; server functions return `{ ok, error }` with friendly Korean messages instead of throwing.
+- `/` switches screens in React state (start → guide/records → select → brief → stage or chat → feedback). `/hrd` is the training-owner dashboard (example data). `/lab` is an unlinked tuning bench for the 3D customer.
+- Conversations are never stored. Only per-round scores are kept, in the browser's localStorage (`src/lib/practice-store.ts`).
+- Scenarios (persona, policy, model sentences, offline lines) live in `src/lib/scenarios.ts`; limits, CALM steps and scoring live in `src/lib/roleplay-rules.ts`, covered by `src/test/`.
+- AI calls go through `src/lib/roleplay.functions.ts` → `roleplay.server.ts` on `@lovable.dev/ai-gateway` with strict JSON schemas. When the gateway fails, the rule-based engine in `roleplay-sim.ts` answers instead (`engine: "sim"`), so practice never dead-ends.
+- Customer art: `src/assets/customers/<scenarioId>-<angry|softening|calm>.jpg`. A scenario with all three is shown as stills; otherwise the three.js customer (`src/lib/stage/scene.ts`) is used.
 - Chat UI is composed from AI Elements in `src/components/ai-elements/`; restyle them via classes, don't replace them.

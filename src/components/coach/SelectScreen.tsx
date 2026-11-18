@@ -136,7 +136,7 @@ export function SelectScreen({
         </div>
 
         {/* how to practise: sticks beside the cards on wide screens */}
-        <aside className="mt-10 lg:sticky lg:top-8 lg:mt-16 lg:self-start">
+        <aside className="mt-10 lg:sticky lg:top-8 lg:mt-4 lg:self-start">
           <p className="eyebrow">2단계</p>
           <h2 className="mt-2 text-xl font-bold text-primary">어떻게 연습할까요?</h2>
 

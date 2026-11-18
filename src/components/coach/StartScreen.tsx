@@ -3,6 +3,7 @@ import { ArrowRight, BookOpen, LineChart } from "lucide-react";
 
 import heroImg from "@/assets/concierge-desk.jpg";
 import { Button } from "@/components/ui/button";
+import { Lines } from "@/components/ui/lines";
 import type { PracticeSummary } from "@/lib/practice-store";
 
 export function StartScreen({
@@ -44,9 +45,7 @@ export function StartScreen({
             화난 고객, 미리 만나 보세요
           </p>
           <p className="text-base leading-relaxed text-muted-foreground">
-            AI 고객이 카운터 앞에서 말을 걸어요.
-            <br />
-            3분 동안 답하고, 바로 피드백을 받아요.
+            <Lines text="AI 고객이 카운터 앞에서 말을 걸어요. 3분 동안 답하고, 바로 피드백을 받아요." />
           </p>
         </div>
 
@@ -93,10 +92,10 @@ export function StartScreen({
           </div>
           <p className="mt-6 text-xs leading-relaxed text-muted-foreground max-lg:text-center">
             연습용입니다. 실제 회사 규정은 확인 필요
-            <span className="mx-2 text-gold">·</span>
+            <br />
             <Link
               to="/hrd"
-              className="rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
+              className="whitespace-nowrap rounded-sm underline underline-offset-4 outline-none hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring"
             >
               교육 담당자 화면
             </Link>

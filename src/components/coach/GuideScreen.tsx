@@ -1,6 +1,7 @@
 import { ArrowLeft, ArrowRight, Check, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Lines } from "@/components/ui/lines";
 import { CALM_STEPS } from "@/lib/roleplay-rules";
 
 /** The four-step response model as a one-minute read before practising. */
@@ -19,10 +20,11 @@ export function GuideScreen({ onBack, onStart }: { onBack: () => void; onStart: 
       <div className="mt-4 lg:max-w-2xl">
         <p className="eyebrow">1분 미리 보기</p>
         <h2 className="mt-2 text-[1.9rem] font-extrabold leading-tight text-primary lg:text-[2.8rem]">
-          화난 고객을 만나면, C · A · L · M
+          화난 고객을 만나면,
+          <span className="block whitespace-nowrap">C · A · L · M</span>
         </h2>
         <p className="mt-3 leading-relaxed text-muted-foreground">
-          순서대로 한 문장씩만 말해도 대화가 달라져요. 연습이 끝나면 이 네 가지로 피드백을 드려요.
+          <Lines text="순서대로 한 문장씩만 말해도 대화가 달라져요. 연습이 끝나면 이 네 가지로 피드백을 드려요." />
         </p>
       </div>
 
@@ -43,7 +45,9 @@ export function GuideScreen({ onBack, onStart }: { onBack: () => void; onStart: 
                   {step.english}
                 </span>
               </h3>
-              <p className="mt-1 text-[0.95rem] leading-relaxed">{step.desc}</p>
+              <p className="mt-1 text-[0.95rem] leading-relaxed">
+                <Lines text={step.desc} />
+              </p>
             </div>
             <ul className="col-start-2 mt-4 space-y-2 text-[0.95rem]">
               {step.examples.map((line) => (

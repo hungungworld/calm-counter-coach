@@ -7,7 +7,7 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import { Message, MessageContent, MessageResponse } from "@/components/ai-elements/message";
+import { Message, MessageContent } from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputButton,
@@ -22,6 +22,7 @@ import { Shimmer } from "@/components/ai-elements/shimmer";
 import { AngerGauge, CalmChips, EngineBadge } from "@/components/coach/parts";
 import { CustomerAvatar } from "@/components/stage/CustomerAvatar";
 import { Button } from "@/components/ui/button";
+import { Lines } from "@/components/ui/lines";
 import { usePracticeSession, type SessionResult } from "@/hooks/use-practice-session";
 import { useSpeechInput } from "@/hooks/use-speech-input";
 import { transcribeSpeech } from "@/lib/roleplay.functions";
@@ -134,20 +135,20 @@ function ChatBody({ scenario, difficulty, onExit, onFinish }: Props) {
       <Conversation className="flex-1">
         <ConversationContent className="gap-6 px-5 py-6">
           <p className="mx-auto max-w-xs text-center text-sm text-muted-foreground">
-            {scenario.title}. 직원이 되어 글로 답해 보세요.
+            <Lines text={`${scenario.title}. 직원이 되어 글로 답해 보세요.`} />
           </p>
           {session.turns.map((turn, i) =>
             turn.role === "customer" ? (
               <Message key={i} from="assistant" className="max-w-[88%]">
                 <span className="text-xs text-muted-foreground">손님</span>
                 <MessageContent className="border-l-2 border-gold pl-4 text-[1.05rem] leading-relaxed">
-                  <MessageResponse>{turn.text}</MessageResponse>
+                  <Lines text={turn.text} />
                 </MessageContent>
               </Message>
             ) : (
               <Message key={i} from="user" className="max-w-[85%]">
                 <MessageContent className="text-[1.05rem] leading-relaxed group-[.is-user]:rounded-md group-[.is-user]:bg-primary group-[.is-user]:text-primary-foreground">
-                  {turn.text}
+                  <Lines text={turn.text} />
                 </MessageContent>
               </Message>
             ),
@@ -161,7 +162,9 @@ function ChatBody({ scenario, difficulty, onExit, onFinish }: Props) {
 
           {session.error && (
             <div className="paper-card flex flex-col gap-3 p-4" role="alert">
-              <p className="text-sm text-destructive">{session.error}</p>
+              <p className="text-sm text-destructive">
+                <Lines text={session.error} />
+              </p>
               <Button variant="quiet" onClick={session.retry} className="h-11 w-full">
                 <RotateCcw />
                 다시 시도
@@ -194,7 +197,7 @@ function ChatBody({ scenario, difficulty, onExit, onFinish }: Props) {
             <span className="mr-2 font-medium text-gold">
               {getCalmStep(session.hint.step).name} 힌트
             </span>
-            {session.hint.line}
+            <Lines text={session.hint.line} />
           </p>
         )}
 
@@ -220,7 +223,9 @@ function ChatBody({ scenario, difficulty, onExit, onFinish }: Props) {
                 )}
                 aria-live="polite"
               >
-                {speech.error ?? (speech.interim || "듣고 있어요. 다 말하면 잠시 멈추세요.")}
+                <Lines
+                  text={speech.error ?? (speech.interim || "듣고 있어요. 다 말하면 잠시 멈추세요.")}
+                />
               </p>
             )}
             <PromptInput onSubmit={handleSubmit} className="mt-3 bg-background">

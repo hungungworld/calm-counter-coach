@@ -17,9 +17,11 @@ import { Shimmer } from "@/components/ai-elements/shimmer";
 import { AngerGauge, CalmChips, EngineBadge, MicButton } from "@/components/coach/parts";
 import { CustomerStage } from "@/components/stage/CustomerStage";
 import { Button } from "@/components/ui/button";
+import { Lines } from "@/components/ui/lines";
 import { useCustomerVoice } from "@/hooks/use-customer-voice";
 import { usePracticeSession, type SessionResult } from "@/hooks/use-practice-session";
 import { useSpeechInput, type SpokenAnswer } from "@/hooks/use-speech-input";
+import { sentenceBreaks } from "@/lib/line-breaks";
 import { transcribeSpeech } from "@/lib/roleplay.functions";
 import {
   DIFFICULTIES,
@@ -107,9 +109,11 @@ export function StageScreen({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lineCount]);
 
-  const shown = useTypewriter(line?.text ?? "", voice.sounding);
+  // The caption keeps the app-wide rhythm: one sentence (or joined clause) per line.
+  const caption = sentenceBreaks(line?.text ?? "");
+  const shown = useTypewriter(caption, voice.sounding);
   const captionReady = !customerBusy || voice.sounding;
-  const visibleChars = customerBusy ? shown : (line?.text.length ?? 0);
+  const visibleChars = customerBusy ? shown : caption.length;
 
   /* ----- the staff member answers ----- */
   const canAnswer = session.sendable && !customerBusy;
@@ -273,9 +277,9 @@ export function StageScreen({
                 aria-live="polite"
                 aria-label={line.text}
               >
-                <span aria-hidden>{line.text.slice(0, visibleChars)}</span>
-                <span aria-hidden className="opacity-0">
-                  {line.text.slice(visibleChars)}
+                <span aria-hidden className="whitespace-pre-line">
+                  {caption.slice(0, visibleChars)}
+                  <span className="opacity-0">{caption.slice(visibleChars)}</span>
                 </span>
               </p>
             ) : (
@@ -304,7 +308,7 @@ export function StageScreen({
                     : "border-l-2 border-gold pl-3 text-foreground",
                 )}
               >
-                {turn.text}
+                <Lines text={turn.text} />
               </p>
             </li>
           ))}
@@ -325,14 +329,16 @@ export function StageScreen({
             <span className="mr-2 font-medium text-gold">
               {getCalmStep(session.hint.step).name} 힌트
             </span>
-            {session.hint.line}
+            <Lines text={session.hint.line} />
           </p>
         )}
 
         <div className="mt-3 pb-1">
           {session.error ? (
             <div className="paper-card flex flex-col gap-3 p-4" role="alert">
-              <p className="text-sm text-destructive">{session.error}</p>
+              <p className="text-sm text-destructive">
+                <Lines text={session.error} />
+              </p>
               <Button variant="quiet" onClick={session.retry} className="h-11 w-full">
                 <RotateCcw />
                 다시 시도
@@ -352,7 +358,9 @@ export function StageScreen({
           ) : heard ? (
             <div className="animate-rise paper-card p-4">
               <p className="text-[0.7rem] font-medium tracking-[0.2em] text-gold">내가 한 말</p>
-              <p className="mt-1 leading-relaxed">{heard.text}</p>
+              <p className="mt-1 leading-relaxed">
+                <Lines text={heard.text} />
+              </p>
               <div className="mt-3 h-1 overflow-hidden rounded-full bg-muted">
                 <div
                   className="h-full w-full origin-left bg-primary"
@@ -424,7 +432,7 @@ export function StageScreen({
                 )}
                 aria-live="polite"
               >
-                {speech.error ?? (speech.interim || guide)}
+                <Lines text={speech.error ?? (speech.interim || guide)} />
               </p>
               <div className="mt-1 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
                 <button

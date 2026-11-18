@@ -4,6 +4,8 @@ import { ArrowLeft, Download, FlaskConical } from "lucide-react";
 
 import { BarCell, TrendChart } from "@/components/hrd/charts";
 import { Button } from "@/components/ui/button";
+import { Lines } from "@/components/ui/lines";
+import { sentenceBreaks } from "@/lib/line-breaks";
 import { HRD_SAMPLE, hrdCsv, hrdTotals } from "@/lib/hrd-sample";
 import { summarize, useRecords } from "@/lib/practice-store";
 import {
@@ -81,10 +83,12 @@ function Dashboard() {
         </div>
         <p className="flex gap-3 rounded-md border border-gold bg-card p-4 text-sm leading-relaxed">
           <FlaskConical className="mt-1 size-4 shrink-0 text-gold" />
-          <span>
-            <strong className="font-semibold text-primary">예시 데이터입니다.</strong> 이 앱은
-            서버에 아무것도 저장하지 않아요. 아래 숫자는 사내 계정과 연결했을 때 보게 될 화면을
-            설명하려고 만든 값이에요. ({data.period})
+          <span className="whitespace-pre-line">
+            <strong className="font-semibold text-primary">예시 데이터입니다.</strong>
+            {"\n"}
+            {sentenceBreaks(
+              `이 앱은 서버에 아무것도 저장하지 않아요. 아래 숫자는 사내 계정과 연결했을 때 보게 될 화면을 설명하려고 만든 값이에요. (${data.period})`,
+            )}
           </span>
         </p>
       </header>
@@ -160,7 +164,9 @@ function Dashboard() {
             ))}
           </ul>
           <p className="mt-5 rounded-sm bg-background px-3 py-2 text-sm leading-relaxed">
-            {step.desc} 이 단계의 모범 문장을 다음 조회 때 함께 읽어 보면 좋아요.
+            <Lines
+              text={`${step.desc} 이 단계의 모범 문장을 다음 조회 때 함께 읽어 보면 좋아요.`}
+            />
           </p>
         </Panel>
 
@@ -268,21 +274,21 @@ function Dashboard() {
           <ol className="mt-4 space-y-4">
             <Action n={1}>
               <strong className="font-semibold">{step.name}</strong> 단계 평균이{" "}
-              {data.steps[weakestStep].toFixed(1)}점으로 가장 낮아요. 파트 조회 때 “안 됩니다” 대신
-              쓸 문장을 10분 함께 연습해요.
+              {data.steps[weakestStep].toFixed(1)}점으로 가장 낮아요.{"\n"}파트 조회 때 “안 됩니다”
+              대신 쓸 문장을 10분 함께 연습해요.
             </Action>
             {hardestScenario && (
               <Action n={2}>
                 <strong className="font-semibold">{getScenario(hardestScenario.id).tag}</strong>{" "}
-                상황 평균이 {hardestScenario.average}점이에요. 책임자에게 넘기는 기준을 다시
+                상황 평균이 {hardestScenario.average}점이에요.{"\n"}책임자에게 넘기는 기준을 다시
                 안내하고 이 상황을 주간 과제로 정해요.
               </Action>
             )}
             {quietStore && (
               <Action n={3}>
                 <strong className="font-semibold">{quietStore.store}</strong> 참여율이{" "}
-                {Math.round((quietStore.active / quietStore.staff) * 100)}%로 가장 낮아요. 오픈 전
-                3분 연습 시간을 점포와 상의해요.
+                {Math.round((quietStore.active / quietStore.staff) * 100)}%로 가장 낮아요.
+                {"\n"}오픈 전 3분 연습 시간을 점포와 상의해요.
               </Action>
             )}
           </ol>
@@ -294,8 +300,7 @@ function Dashboard() {
         >
           {mine.count === 0 ? (
             <p className="text-sm leading-relaxed text-muted-foreground">
-              아직 없어요. 연습을 한 번 마치면 점수가 여기에 나타나요. 실제 운영에서는 이 값이 모여
-              위 화면이 돼요.
+              <Lines text="아직 없어요. 연습을 한 번 마치면 점수가 여기에 나타나요. 실제 운영에서는 이 값이 모여 위 화면이 돼요." />
             </p>
           ) : (
             <dl className="grid grid-cols-3 gap-4">
@@ -355,7 +360,9 @@ function Action({ n, children }: { n: number; children: React.ReactNode }) {
   return (
     <li className="grid grid-cols-[2rem_1fr] gap-x-2 leading-relaxed">
       <span className="font-serif text-2xl font-extrabold leading-none text-gold-soft">{n}</span>
-      <span className="text-[0.95rem] text-primary-foreground/90">{children}</span>
+      <span className="whitespace-pre-line text-[0.95rem] text-primary-foreground/90">
+        {children}
+      </span>
     </li>
   );
 }

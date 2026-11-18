@@ -14,6 +14,7 @@ import {
 import { Shimmer } from "@/components/ai-elements/shimmer";
 import { EmotionChart, EngineBadge, ScoreRing } from "@/components/coach/parts";
 import { Button } from "@/components/ui/button";
+import { Lines } from "@/components/ui/lines";
 import type { PracticeSetup, SessionResult } from "@/hooks/use-practice-session";
 import { addRecord } from "@/lib/practice-store";
 import { getFeedback, getModelCompare, type Engine } from "@/lib/roleplay.functions";
@@ -196,7 +197,7 @@ export function FeedbackScreen({
                   {gradeLabel(total)}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                  {feedback.summary}
+                  <Lines text={feedback.summary} />
                 </p>
                 {engine === "sim" && <EngineBadge className="mt-3" />}
               </div>
@@ -230,7 +231,9 @@ export function FeedbackScreen({
                       </span>
                       잘한 점 {i + 1}
                     </h3>
-                    <p className="mt-3 leading-relaxed">{good}</p>
+                    <p className="mt-3 leading-relaxed">
+                      <Lines text={good} />
+                    </p>
                   </section>
                 ))}
               </div>
@@ -242,7 +245,9 @@ export function FeedbackScreen({
                   </span>
                   고칠 점
                 </h3>
-                <p className="mt-3 leading-relaxed">{feedback.improve}</p>
+                <p className="mt-3 leading-relaxed">
+                  <Lines text={feedback.improve} />
+                </p>
               </section>
 
               <section className="animate-rise rounded-md border border-gold bg-primary p-6 text-primary-foreground shadow-soft gold-frame [animation-delay:270ms]">
@@ -251,11 +256,15 @@ export function FeedbackScreen({
                   다음에 쓸 한 문장
                 </p>
                 <p className="mt-3 font-serif text-xl font-bold leading-relaxed lg:text-2xl">
-                  “{feedback.nextLine}”
+                  <Lines text={`“${feedback.nextLine}”`} />
                 </p>
               </section>
+            </>
+          )}
 
-              <section className="paper-card animate-rise p-5 [animation-delay:340ms]">
+          <div className="grid gap-4 lg:grid-cols-2">
+            {feedback && (
+              <section className="paper-card animate-rise flex flex-col p-5 [animation-delay:340ms]">
                 <h3 className="text-base font-bold text-primary">응대 4단계와 말투</h3>
                 <ul className="mt-4 space-y-4">
                   {SCORE_KEYS.map((key) => {
@@ -281,31 +290,30 @@ export function FeedbackScreen({
                           <span className="text-xs font-normal text-muted-foreground">/5</span>
                         </span>
                         <span className="col-span-2 col-start-2 mt-1 text-xs leading-relaxed text-muted-foreground">
-                          {feedback.notes[key]}
+                          <Lines text={feedback.notes[key]} />
                         </span>
                       </li>
                     );
                   })}
                 </ul>
               </section>
-            </>
-          )}
-
-          <section className="paper-card p-5">
-            <div className="flex items-baseline justify-between gap-3">
-              <h3 className="text-base font-bold text-primary">손님의 감정 변화</h3>
-              <p className="font-serif text-lg font-bold tabular-nums text-primary">
-                {angerStart}
-                <span className="mx-2 text-gold">→</span>
-                {angerEnd}
+            )}
+            <section className="paper-card flex flex-col p-5">
+              <div className="flex items-baseline justify-between gap-3">
+                <h3 className="text-base font-bold text-primary">손님의 감정 변화</h3>
+                <p className="font-serif text-lg font-bold tabular-nums text-primary">
+                  {angerStart}
+                  <span className="mx-2 text-gold">→</span>
+                  {angerEnd}
+                </p>
+              </div>
+              <EmotionChart trail={result.angerTrail} className="mb-4 mt-3" />
+              <p className="mt-auto rounded-sm bg-background px-3 py-2 text-sm leading-relaxed">
+                <span className="mr-2 font-medium text-gold">손님의 속마음</span>
+                <Lines text={scenario.hiddenNeed} />
               </p>
-            </div>
-            <EmotionChart trail={result.angerTrail} className="mt-3" />
-            <p className="mt-3 rounded-sm bg-background px-3 py-2 text-sm leading-relaxed">
-              <span className="mr-2 font-medium text-gold">손님의 속마음</span>
-              {scenario.hiddenNeed}
-            </p>
-          </section>
+            </section>
+          </div>
 
           {delivery.pace !== null && (
             <section className="paper-card p-5">
@@ -365,7 +373,9 @@ export function FeedbackScreen({
                 turn.role === "customer" ? (
                   <li key={i}>
                     <p className="text-[0.7rem] font-medium tracking-[0.2em] text-gold">손님</p>
-                    <p className="mt-1 border-l-2 border-gold pl-3 leading-relaxed">{turn.text}</p>
+                    <p className="mt-1 border-l-2 border-gold pl-3 leading-relaxed">
+                      <Lines text={turn.text} />
+                    </p>
                     {turn.thought && (
                       <p className="mt-1 pl-3 text-xs text-muted-foreground">
                         속마음 · {turn.thought}
@@ -376,7 +386,7 @@ export function FeedbackScreen({
                   <li key={i} className="pl-6">
                     <p className="text-[0.7rem] font-medium tracking-[0.2em] text-gold">나</p>
                     <p className="mt-1 rounded-sm bg-primary px-3 py-2 leading-relaxed text-primary-foreground">
-                      {turn.text}
+                      <Lines text={turn.text} />
                     </p>
                     <p className="mt-2 flex flex-wrap gap-1">
                       {CALM_STEPS.filter((step) => turn.signals?.[step.id]).map((step) => (
@@ -401,7 +411,7 @@ export function FeedbackScreen({
             </summary>
             <div className="px-5 pb-5">
               <p className="text-sm text-muted-foreground">
-                교육 담당자가 다듬어 둔 문장이에요. 소리 내어 한 번 읽어 보세요.
+                <Lines text="교육 담당자가 다듬어 둔 문장이에요. 소리 내어 한 번 읽어 보세요." />
               </p>
               <ol className="mt-4 space-y-3">
                 {CALM_STEPS.map((step) => (
@@ -424,10 +434,14 @@ export function FeedbackScreen({
                   {compare.map((item, i) => (
                     <li key={i} className="text-[0.95rem] leading-relaxed">
                       <p className="text-muted-foreground line-through decoration-gold/60">
-                        {item.yours}
+                        <Lines text={item.yours} />
                       </p>
-                      <p className="mt-1 font-medium text-primary">→ {item.better}</p>
-                      <p className="mt-1 text-xs text-muted-foreground">{item.why}</p>
+                      <p className="mt-1 font-medium text-primary">
+                        <Lines text={`→ ${item.better}`} />
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        <Lines text={item.why} />
+                      </p>
                     </li>
                   ))}
                 </ul>
@@ -447,8 +461,7 @@ export function FeedbackScreen({
 
           <p className="flex items-start gap-2 px-1 pt-2 text-sm leading-relaxed text-muted-foreground">
             <Heart className="mt-1 size-4 shrink-0 text-gold" />
-            수고했어요. 연습 속 손님의 화는 연습실에 두고 가세요. 점수만 이 기기에 남고, 대화 내용은
-            저장하지 않아요.
+            <Lines text="수고했어요. 연습 속 손님의 화는 연습실에 두고 가세요. 점수만 이 기기에 남고, 대화 내용은 저장하지 않아요." />
           </p>
 
           <div className="space-y-3 pb-2 pt-4 lg:hidden">

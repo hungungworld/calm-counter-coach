@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ArrowLeft, ArrowRight, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Lines } from "@/components/ui/lines";
 import type { PracticeRecord, PracticeSummary } from "@/lib/practice-store";
 import {
   CALM_ORDER,
@@ -123,7 +124,7 @@ export function RecordsScreen({
                   {weakest.letter} · {weakest.name}
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-primary-foreground/85">
-                  {weakest.desc}
+                  <Lines text={weakest.desc} />
                 </p>
               </section>
             )}
